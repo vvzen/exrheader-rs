@@ -1,0 +1,6 @@
+[workspace]
+resolver = "3"
+members = ["bin/exrheader-rs", "lib/exrheader-rs-lib"]
+
+[workspace.dependencies]
+log = "0.4.29"

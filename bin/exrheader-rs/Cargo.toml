@@ -1,0 +1,13 @@
+[package]
+name = "exrheader-rs"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+log = { workspace = true } 
+
+exrheader-rs-lib = { path = "../../lib/exrheader-rs-lib" }
+
+clap = { version = "4.5.60", features = ["derive"] }
+color-eyre = "0.6.5"
+env_logger = "0.11.9"
