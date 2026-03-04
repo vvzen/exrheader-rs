@@ -1,0 +1,43 @@
+use std::path::PathBuf;
+
+use clap::Parser;
+
+use exrheader_rs_lib::{parse_metadata, print_metadata};
+
+#[derive(Debug, Parser)]
+struct Cli {
+    /// List of EXR files to process.
+    exr_paths: Vec<PathBuf>,
+}
+
+fn main() -> color_eyre::Result<()> {
+    env_logger::init();
+
+    let cli = Cli::parse();
+    log::info!("Files received: {:?}", cli.exr_paths);
+
+    let mut errors = Vec::new();
+    let metadata: Vec<_> = cli
+        .exr_paths
+        .iter()
+        .map(|f| (f, parse_metadata(&f)))
+        .filter_map(|(f, r)| match r {
+            Ok(m) => Some((f, m)),
+            Err(e) => {
+                errors.push(e);
+                None
+            }
+        })
+        .collect();
+
+    for error in errors {
+        log::error!("{error}");
+    }
+
+    for (file, metadata) in metadata {
+        println!("File {}", file.display());
+        print_metadata(metadata);
+    }
+
+    Ok(())
+}
