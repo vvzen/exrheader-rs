@@ -36,8 +36,8 @@ fn main() -> color_eyre::Result<()> {
     }
 
     for (file, metadata) in metadata {
-        println!("File {}", file.display());
-        print_metadata(metadata);
+        println!("File '{}'\n", file.display());
+        print_metadata(metadata)?;
     }
 
     Ok(())
