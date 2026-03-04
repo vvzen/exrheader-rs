@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
+exr = "1.74.0"
 log = { workspace = true } 
 
 thiserror = "2.0.18"
