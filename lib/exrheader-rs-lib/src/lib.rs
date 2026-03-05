@@ -23,7 +23,7 @@ pub enum ParsingError {
 
 pub fn parse_metadata(p: impl AsRef<Path>) -> Result<MetaData, ParsingError> {
     let file_path = p.as_ref();
-    log::info!("Reading metadata of '{}'", file_path.display());
+    log::debug!("Reading metadata of '{}'", file_path.display());
 
     if !file_path.exists() {
         return Err(ParsingError::NotExist(file_path.display().to_string()));
