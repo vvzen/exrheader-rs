@@ -36,8 +36,7 @@ pub fn parse_metadata(p: impl AsRef<Path>) -> Result<MetaData, ParsingError> {
     metadata
 }
 
-// TODO: Split into format (no side effects) and print (only side effects)
-pub fn print_metadata(meta: MetaData) -> Result<(), ParsingError> {
+pub fn format_metadata(meta: MetaData) -> Result<Vec<String>, ParsingError> {
     let mut lines = Vec::new();
 
     // Requirements
@@ -107,6 +106,10 @@ pub fn print_metadata(meta: MetaData) -> Result<(), ParsingError> {
         }
     }
 
+    Ok(lines)
+}
+
+pub fn print_metadata(lines: Vec<String>) -> Result<(), std::io::Error> {
     let stdout = std::io::stdout();
     let mut lock = stdout.lock();
 

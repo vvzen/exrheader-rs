@@ -2,7 +2,7 @@ use std::path::PathBuf;
 
 use clap::Parser;
 
-use exrheader_rs_lib::{parse_metadata, print_metadata};
+use exrheader_rs_lib::{format_metadata, parse_metadata, print_metadata};
 
 #[derive(Debug, Parser)]
 struct Cli {
@@ -37,7 +37,8 @@ fn main() -> color_eyre::Result<()> {
 
     for (file, metadata) in metadata {
         println!("File '{}'\n", file.display());
-        print_metadata(metadata)?;
+        let lines = format_metadata(metadata)?;
+        print_metadata(lines)?;
     }
 
     Ok(())
