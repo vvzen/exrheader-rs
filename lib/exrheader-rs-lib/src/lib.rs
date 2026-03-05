@@ -2,7 +2,9 @@ use std::fmt::Display;
 use std::io::Write;
 use std::path::Path;
 
-use exr::meta::attribute::{AttributeValue, LevelMode, LineOrder, SampleType, TileDescription};
+use exr::meta::attribute::{
+    AttributeValue, Chromaticities, LevelMode, LineOrder, SampleType, TileDescription,
+};
 use exr::meta::MetaData;
 use thiserror::Error;
 
@@ -86,13 +88,7 @@ pub fn format_metadata(meta: MetaData) -> Result<Vec<String>, ParsingError> {
                     let max = b.max();
                     format!("{name}: {} - {}", format_vec2(pos), format_vec2(max))
                 }
-                AttributeValue::Chromaticities(chroma) => {
-                    let red = format_vec2(chroma.red);
-                    let green = format_vec2(chroma.green);
-                    let blue = format_vec2(chroma.blue);
-                    let white = format_vec2(chroma.white);
-                    format!("chromaticies (rgbw): {red}, {green}, {blue}, {white}",)
-                }
+                AttributeValue::Chromaticities(chroma) => format_chromaticities(chroma),
                 AttributeValue::Preview(p) => {
                     let size = format_vec2_as_pixels(p.size);
                     format!("{name}: {size}")
@@ -158,6 +154,16 @@ fn format_tile_description(td: TileDescription) -> String {
 
     let tile_size = format_vec2_as_pixels(td.tile_size);
     format!("tiles:\n\t{level}\n\ttile size: {tile_size}")
+}
+
+fn format_chromaticities(chroma: Chromaticities) -> String {
+    format!(
+        "chromaticies:\n\tred: {}\n\tgreen: {}\n\tblue: {}\n\twhite: {}",
+        format_vec2(chroma.red),
+        format_vec2(chroma.green),
+        format_vec2(chroma.blue),
+        format_vec2(chroma.white),
+    )
 }
 
 fn format_vec2<T: Display>(v: exr::math::Vec2<T>) -> String {
