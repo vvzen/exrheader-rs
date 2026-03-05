@@ -66,10 +66,22 @@ pub fn print_metadata(meta: MetaData) -> Result<(), ParsingError> {
                     };
                     format!("lineOrder: {line_order}")
                 }
+                AttributeValue::I32(i) => {
+                    format!("{name}: {i}")
+                }
+                AttributeValue::F32(f) => {
+                    format!("{name}: {f}")
+                }
+                AttributeValue::F64(f) => {
+                    format!("{name}: {f}")
+                }
+                AttributeValue::FloatVec2(fv) => {
+                    format!("{name}: {}", format_vec2(fv))
+                }
                 AttributeValue::IntegerBounds(b) => {
                     let pos = b.position;
                     let max = b.max();
-                    format!("{name}: ({} {}) - ({} {})", pos.0, pos.1, max.0, max.1)
+                    format!("{name}: {} - {}", format_vec2(pos), format_vec2(max))
                 }
                 AttributeValue::Chromaticities(chroma) => {
                     let red = format_vec2(chroma.red);
@@ -126,5 +138,5 @@ fn format_compression(comp: exr::compression::Compression) -> String {
 }
 
 fn format_vec2<T: Display>(v: exr::math::Vec2<T>) -> String {
-    format!("{} {}", v.0, v.1)
+    format!("({} {})", v.0, v.1)
 }
