@@ -1,3 +1,4 @@
 [submodule "openexr-images"]
 	path = openexr-images
 	url = git@github.com:AcademySoftwareFoundation/openexr-images.git
+	update = none
