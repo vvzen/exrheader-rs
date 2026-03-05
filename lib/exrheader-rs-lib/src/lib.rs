@@ -1,3 +1,4 @@
+use std::cmp::Ordering;
 use std::fmt::Display;
 use std::io::Write;
 use std::path::Path;
@@ -7,6 +8,23 @@ use exr::meta::attribute::{
 };
 use exr::meta::MetaData;
 use thiserror::Error;
+
+// Just a small utility method to keep code a bit more concise
+// (at the cost of a bit of cloning).
+trait Sorted<T, F> {
+    fn sorted_by(&mut self, f: F) -> Self;
+}
+
+impl<T, F> Sorted<T, F> for Vec<T>
+where
+    T: Clone,
+    F: FnMut(&T, &T) -> Ordering,
+{
+    fn sorted_by(&mut self, f: F) -> Self {
+        self.sort_by(f);
+        self.to_owned()
+    }
+}
 
 #[derive(Error, Debug)]
 pub enum ParsingError {
@@ -61,7 +79,12 @@ pub fn format_metadata(meta: MetaData) -> Result<Vec<String>, ParsingError> {
 
     // Layers
     for header in meta.headers {
-        for (name, value) in header.all_named_attributes() {
+        let attributes = header
+            .all_named_attributes()
+            .collect::<Vec<_>>()
+            .sorted_by(|a, b| a.0.cmp(b.0));
+
+        for (name, value) in attributes {
             let name = String::from_utf8(name.to_vec())
                 .map_err(|e| ParsingError::FailedUTF8Conversion(e))?;
 
