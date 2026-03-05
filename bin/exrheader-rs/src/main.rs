@@ -21,7 +21,7 @@ fn main() -> color_eyre::Result<()> {
     let metadata: Vec<_> = cli
         .exr_paths
         .iter()
-        .map(|f| (f, parse_metadata(&f)))
+        .map(|f| (f, parse_metadata(f)))
         .filter_map(|(f, r)| match r {
             Ok(m) => Some((f, m)),
             Err(e) => {
