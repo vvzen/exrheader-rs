@@ -132,7 +132,7 @@ fn format_channels(channel_list: exr::meta::attribute::ChannelList) -> String {
             SampleType::F32 => "32-bit floating-point",
             SampleType::U32 => "32-bit unsigned",
         };
-        let channel_info = format!("\t{channel_name} - {bitdepth}, sampling {samples}");
+        let channel_info = format!("\t{channel_name}, {bitdepth}, sampling {samples}");
         s.push(channel_info);
     }
 
