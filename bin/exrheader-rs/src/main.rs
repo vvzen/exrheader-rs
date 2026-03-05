@@ -11,6 +11,8 @@ struct Cli {
 }
 
 fn main() -> color_eyre::Result<()> {
+    color_eyre::install()?;
+
     let log_env_setup = env_logger::Env::default().default_filter_or("INFO");
     env_logger::Builder::from_env(log_env_setup).init();
 
