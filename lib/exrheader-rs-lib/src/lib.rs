@@ -41,16 +41,25 @@ pub fn parse_metadata(p: impl AsRef<Path>) -> Result<MetaData, ParsingError> {
 pub fn format_metadata(meta: MetaData) -> Result<Vec<String>, ParsingError> {
     let mut lines = Vec::new();
 
-    // Requirements
+    // File format and flags
+    let file_format_version = meta.requirements.file_format_version;
+    lines.push(format!("File format version: {file_format_version}"));
+    lines.push(format!("Flags:"));
+    lines.push(format!("\tdeep: {}", meta.requirements.has_deep_data));
     lines.push(format!(
-        "File format version: {}",
-        meta.requirements.file_format_version
+        "\tmultiple layers: {}",
+        meta.requirements.has_multiple_layers
     ));
     lines.push(format!(
-        "Has deep data: {}",
-        meta.requirements.has_deep_data
+        "\tlong names: {}",
+        meta.requirements.has_long_names
+    ));
+    lines.push(format!(
+        "\tsingle layer and tiled: {}",
+        meta.requirements.is_single_layer_and_tiled
     ));
 
+    // Layers
     for header in meta.headers {
         for (name, value) in header.all_named_attributes() {
             let name = String::from_utf8(name.to_vec())
