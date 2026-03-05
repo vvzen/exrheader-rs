@@ -126,7 +126,7 @@ pub fn format_metadata(metadata: MetaData) -> Result<Vec<String>, ParsingError> 
                     format!("{name}: {size}")
                 }
                 AttributeValue::Text(t) => {
-                    format!("{name}: {t}")
+                    format!(r#"{name}: "{t}""#)
                 }
                 AttributeValue::TileDescription(td) => format_tile_description(td),
                 _ => {
