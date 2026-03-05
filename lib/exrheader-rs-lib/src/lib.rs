@@ -56,6 +56,10 @@ pub fn print_metadata(meta: MetaData) -> Result<(), ParsingError> {
                 .map_err(|e| ParsingError::FailedUTF8Conversion(e))?;
 
             let line = match value {
+                AttributeValue::BlockType(bt) => {
+                    let block_type = String::from_utf8(bt.to_text_bytes().to_vec())?;
+                    format!(r#"{name}: "{block_type}""#,)
+                }
                 AttributeValue::ChannelList(list) => format_channels(list),
                 AttributeValue::Compression(c) => format_compression(c),
                 AttributeValue::LineOrder(lo) => {
