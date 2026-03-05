@@ -1,9 +1,9 @@
 # Why
 
 If you just want to look at the metadata of an OpenEXR file, `exrheader` does a fantastic job at that.
-Unfortunately, the way it's built and packaged by most package managers requires you to have quite a few shared libraries installed as well, which can not ideal in more constrained environments.
+Unfortunately, the way it's built and packaged by most package managers requires you to have quite a few shared libraries installed as well, which is not ideal when working in more constrained environments.
 
-For example, on my Arch installation:
+For example, on my Arch installation (exrheader v3.4.5):
 ```
 $ ldd $(which exrheader)
         linux-vdso.so.1 (0x00007f6569052000)
