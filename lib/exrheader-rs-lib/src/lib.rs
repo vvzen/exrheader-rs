@@ -2,7 +2,7 @@ use std::fmt::Display;
 use std::io::Write;
 use std::path::Path;
 
-use exr::meta::attribute::{AttributeValue, LineOrder, SampleType};
+use exr::meta::attribute::{AttributeValue, LevelMode, LineOrder, SampleType, TileDescription};
 use exr::meta::MetaData;
 use thiserror::Error;
 
@@ -96,6 +96,7 @@ pub fn format_metadata(meta: MetaData) -> Result<Vec<String>, ParsingError> {
                 AttributeValue::Text(t) => {
                     format!("{name}: {t}")
                 }
+                AttributeValue::TileDescription(td) => format_tile_description(td),
                 _ => {
                     // FIXME: Keep implementing
                     log::warn!("Skipping unsupported attribute: {name}");
@@ -142,6 +143,17 @@ fn format_channels(channel_list: exr::meta::attribute::ChannelList) -> String {
 fn format_compression(comp: exr::compression::Compression) -> String {
     let c = comp.to_string().replace(" compression", "");
     format!("compression: {c}",)
+}
+
+fn format_tile_description(td: TileDescription) -> String {
+    let level = match td.level_mode {
+        LevelMode::Singular => "single level",
+        LevelMode::MipMap => "mipmap",
+        LevelMode::RipMap => "ripmap",
+    };
+
+    let tile_size = format!("{} by {} pixels", td.tile_size.0, td.tile_size.1);
+    format!("tiles:\n\t{level}\n\ttile size: {tile_size}")
 }
 
 fn format_vec2<T: Display>(v: exr::math::Vec2<T>) -> String {
