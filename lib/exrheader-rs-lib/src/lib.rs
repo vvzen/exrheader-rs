@@ -93,6 +93,10 @@ pub fn format_metadata(meta: MetaData) -> Result<Vec<String>, ParsingError> {
                     let white = format_vec2(chroma.white);
                     format!("chromaticies (rgbw): {red}, {green}, {blue}, {white}",)
                 }
+                AttributeValue::Preview(p) => {
+                    let size = format_vec2_as_pixels(p.size);
+                    format!("{name}: {size}")
+                }
                 AttributeValue::Text(t) => {
                     format!("{name}: {t}")
                 }
@@ -152,10 +156,14 @@ fn format_tile_description(td: TileDescription) -> String {
         LevelMode::RipMap => "ripmap",
     };
 
-    let tile_size = format!("{} by {} pixels", td.tile_size.0, td.tile_size.1);
+    let tile_size = format_vec2_as_pixels(td.tile_size);
     format!("tiles:\n\t{level}\n\ttile size: {tile_size}")
 }
 
 fn format_vec2<T: Display>(v: exr::math::Vec2<T>) -> String {
     format!("({} {})", v.0, v.1)
+}
+
+fn format_vec2_as_pixels<T: Display>(v: exr::math::Vec2<T>) -> String {
+    format!("{} by {} pixels", v.0, v.1)
 }
