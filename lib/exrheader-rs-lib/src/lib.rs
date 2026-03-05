@@ -29,7 +29,7 @@ where
 #[derive(Error, Debug)]
 pub enum ParsingError {
     #[error("Could not read file on disk: '{0}'")]
-    NotExist(String),
+    MissingFile(String),
 
     #[error("Failed to parse metadata.")]
     EXRReadError(#[from] exr::error::Error),
@@ -41,12 +41,13 @@ pub enum ParsingError {
     IoError(#[from] std::io::Error),
 }
 
+/// Parse the EXR metadata of the file at path `p`.
 pub fn parse_metadata(p: impl AsRef<Path>) -> Result<MetaData, ParsingError> {
     let file_path = p.as_ref();
     log::debug!("Reading metadata of '{}'", file_path.display());
 
     if !file_path.exists() {
-        return Err(ParsingError::NotExist(file_path.display().to_string()));
+        return Err(ParsingError::MissingFile(file_path.display().to_string()));
     }
 
     let pedantic = true;
@@ -56,29 +57,31 @@ pub fn parse_metadata(p: impl AsRef<Path>) -> Result<MetaData, ParsingError> {
     metadata
 }
 
-pub fn format_metadata(meta: MetaData) -> Result<Vec<String>, ParsingError> {
+/// Traverse the given `metadata` and return a list of human readable lines
+/// describing those metadata.
+pub fn format_metadata(metadata: MetaData) -> Result<Vec<String>, ParsingError> {
     let mut lines = Vec::new();
 
     // File format and flags
-    let file_format_version = meta.requirements.file_format_version;
+    let file_format_version = metadata.requirements.file_format_version;
     lines.push(format!("File format version: {file_format_version}"));
     lines.push(format!("Flags:"));
-    lines.push(format!("\tdeep: {}", meta.requirements.has_deep_data));
+    lines.push(format!("\tdeep: {}", metadata.requirements.has_deep_data));
     lines.push(format!(
         "\tmultiple layers: {}",
-        meta.requirements.has_multiple_layers
+        metadata.requirements.has_multiple_layers
     ));
     lines.push(format!(
         "\tlong names: {}",
-        meta.requirements.has_long_names
+        metadata.requirements.has_long_names
     ));
     lines.push(format!(
         "\tsingle layer and tiled: {}",
-        meta.requirements.is_single_layer_and_tiled
+        metadata.requirements.is_single_layer_and_tiled
     ));
 
     // Layers
-    for header in meta.headers {
+    for header in metadata.headers {
         let attributes = header
             .all_named_attributes()
             .collect::<Vec<_>>()
@@ -142,7 +145,8 @@ pub fn format_metadata(meta: MetaData) -> Result<Vec<String>, ParsingError> {
     Ok(lines)
 }
 
-pub fn print_metadata(lines: Vec<String>) -> Result<(), std::io::Error> {
+/// Print the given lines on stdout.
+pub fn print_metadata(lines: &[String]) -> Result<(), std::io::Error> {
     let stdout = std::io::stdout();
     let mut lock = stdout.lock();
 

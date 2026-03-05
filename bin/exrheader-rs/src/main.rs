@@ -38,7 +38,7 @@ fn main() -> color_eyre::Result<()> {
     for (file, metadata) in metadata {
         println!("File '{}'\n", file.display());
         let lines = format_metadata(metadata)?;
-        print_metadata(lines)?;
+        print_metadata(&lines)?;
     }
 
     Ok(())
