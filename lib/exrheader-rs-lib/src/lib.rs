@@ -51,10 +51,7 @@ pub fn parse_metadata(p: impl AsRef<Path>) -> Result<MetaData, ParsingError> {
     }
 
     let pedantic = true;
-    let metadata =
-        MetaData::read_from_file(file_path, pedantic).map_err(|e| ParsingError::EXRReadError(e));
-
-    metadata
+    MetaData::read_from_file(file_path, pedantic).map_err(ParsingError::EXRReadError)
 }
 
 /// Traverse the given `metadata` and return a list of human readable lines
@@ -65,7 +62,7 @@ pub fn format_metadata(metadata: MetaData) -> Result<Vec<String>, ParsingError> 
     // File format and flags
     let file_format_version = metadata.requirements.file_format_version;
     lines.push(format!("File format version: {file_format_version}"));
-    lines.push(format!("Flags:"));
+    lines.push("Flags:".to_string());
     lines.push(format!("\tdeep: {}", metadata.requirements.has_deep_data));
     lines.push(format!(
         "\tmultiple layers: {}",
@@ -88,8 +85,8 @@ pub fn format_metadata(metadata: MetaData) -> Result<Vec<String>, ParsingError> 
             .sorted_by(|a, b| a.0.cmp(b.0));
 
         for (name, value) in attributes {
-            let name = String::from_utf8(name.to_vec())
-                .map_err(|e| ParsingError::FailedUTF8Conversion(e))?;
+            let name =
+                String::from_utf8(name.to_vec()).map_err(ParsingError::FailedUTF8Conversion)?;
 
             let line = match value {
                 AttributeValue::BlockType(bt) => {
@@ -159,7 +156,7 @@ pub fn print_metadata(lines: &[String]) -> Result<(), std::io::Error> {
 
 fn format_channels(channel_list: exr::meta::attribute::ChannelList) -> String {
     let mut s = Vec::new();
-    s.push(format!("channels:"));
+    s.push("channels:".to_string());
 
     for channel in channel_list.list {
         let channel_name = channel.name;
