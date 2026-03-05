@@ -42,11 +42,11 @@ pub fn print_metadata(meta: MetaData) -> Result<(), ParsingError> {
 
     // Requirements
     lines.push(format!(
-        "file format version: {}",
+        "File format version: {}",
         meta.requirements.file_format_version
     ));
     lines.push(format!(
-        "has deep data: {}",
+        "Has deep data: {}",
         meta.requirements.has_deep_data
     ));
 
