@@ -58,6 +58,91 @@ $ ldd $(which exrheader) | awk '{print $3}' | xargs -I {} du -Lsh {}
 512K    /usr/lib/libopenjph.so.0.24
 ```
 
+# Notice
+
+This project is still heavily WIP and doesn't produce identical output to the one produced by `exrheader`. Some details will differ since I tried to optimize for legibility instead of keeping 100% compatibility on the generated output.
+
+For some images, the results should already be pretty similar.
+For example:
+
+```
+$ exrheader openexr-images/Tiles/Spirals.exr 2>/dev/null
+
+file openexr-images/Tiles/Spirals.exr:
+
+file format version: 2, flags 0x200
+capDate (type string): "2004:01:19 10:25:14"
+channels (type chlist):
+    A, 16-bit floating-point, sampling 1 1
+    B, 16-bit floating-point, sampling 1 1
+    G, 16-bit floating-point, sampling 1 1
+    R, 16-bit floating-point, sampling 1 1
+    Z, 32-bit floating-point, sampling 1 1
+chromaticities (type chromaticities):
+    red   (0.62955 0.341)
+    green (0.2867 0.6108)
+    blue  (0.1489 0.07125)
+    white (0.3155 0.33165)
+compression (type compression): pxr24: lossy 24-bit float compression, in blocks of 16 scan lines.
+dataWindow (type box2i): (-20 -20) - (1019 1019)
+displayWindow (type box2i): (0 0) - (999 999)
+lineOrder (type lineOrder): increasing y
+owner (type string): "Copyright 2004 Industrial Light & Magic"
+pixelAspectRatio (type float): 1
+preview (type preview): 100 by 100 pixels
+screenWindowCenter (type v2f): (0 0)
+screenWindowWidth (type float): 1
+tiles (type tiledesc):
+    single level
+    tile size 287 by 126 pixels
+type (type string): "tiledimage"
+utcOffset (type float): 28800
+whiteLuminance (type float): 90
+```
+
+vs
+
+```
+$ exrheader-rs openexr-images/Tiles/Spirals.exr 2>/dev/null
+File 'openexr-images/Tiles/Spirals.exr'
+
+File format version: 2
+Flags:
+	deep: false
+	multiple layers: false
+	long names: false
+	single layer and tiled: true
+capDate: "2004:01:19 10:25:14"
+channels:
+	A, 16-bit floating-point, sampling 1 1
+	B, 16-bit floating-point, sampling 1 1
+	G, 16-bit floating-point, sampling 1 1
+	R, 16-bit floating-point, sampling 1 1
+	Z, 32-bit floating-point, sampling 1 1
+chromaticies:
+	red: (0.62955 0.341)
+	green: (0.2867 0.6108)
+	blue: (0.1489 0.07125)
+	white: (0.3155 0.33165)
+chunkCount: 36
+compression: pxr24
+dataWindow: (-20 -20) - (1019 1019)
+displayWindow: (0 0) - (999 999)
+lineOrder: increasing
+owner: "Copyright 2004 Industrial Light & Magic"
+pixelAspectRatio: 1
+preview: 100 by 100 pixels
+screenWindowCenter: (0 0)
+screenWindowWidth: 1
+tiles:
+	single level
+	tile size: 287 by 126 pixels
+type: "tiledimage"
+utcOffset: 28800
+whiteLuminance: 90
+```
+
+
 # Installation
 
 ## From source
