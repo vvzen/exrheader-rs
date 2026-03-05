@@ -5,8 +5,10 @@ use clap::Parser;
 use exrheader_rs_lib::{format_metadata, parse_metadata, print_metadata};
 
 #[derive(Debug, Parser)]
+#[command(version, about, long_about = "Read metadata from EXR files")]
 struct Cli {
     /// List of EXR files to process.
+    #[arg(required = true)]
     exr_paths: Vec<PathBuf>,
 }
 
