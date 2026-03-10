@@ -56,4 +56,6 @@ jobs:
       # FIXME: Figure out $title and $tag
       - name: Create GitHub Release
         run: |
+          tag=$(git describe --tags $(git rev-list --tags --max-count=1))
+          title="Sample Release"
           gh release create $tag --generate-notes --title $title ./dist/* --fail-on-no-commits
