@@ -64,7 +64,6 @@ jobs:
 
       # Create a new release
       # Docs: https://cli.github.com/manual/gh_release_create
-      # FIXME: Figure out $title and $tag
       - name: Create GitHub Release
         run: |
           tag=$(git describe --tags $(git rev-list --tags --max-count=1))
