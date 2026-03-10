@@ -3,7 +3,6 @@ name: Create Release
 on:
   pull_request:
   push:
-    branches: [ "main" ] # FIXME: Remove after I'm done testing!
     tags:
       - '**[0-9]+.[0-9]+.[0-9]+*'
 env:
