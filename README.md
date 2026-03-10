@@ -155,5 +155,4 @@ cargo install --git ssh://git@github.com/vvzen/exrheader-rs.git --bin exrheader-
 
 ## From prebuilt binaries
 
-I need to setup CI for this repo, so currently I don't ship any prebuilt binaries.
-Once I figure out to how build binaries here via Github Actions, I suppose I'll make releases for Linux and macOS!
+This project uses [cargo-dist](https://axodotdev.github.io/cargo-dist/) to create releases.
