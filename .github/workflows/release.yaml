@@ -30,13 +30,17 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    - name: build-linux-x86-binary
+    - name: Build binary for linux x86
       run: cargo build --release --verbose
+    - name: Rename Binary
+      run: |
+        mkdir -p dist
+        cp target/release/exrheader-rs dist/exrheader-rs-linux-x86
     - name: Upload artifact 
       uses: actions/upload-artifact@v4
       with:
         name: ${{ env.BINARY_NAME }}-${{ github.sha }}
-        path: target/release/exrheader-rs
+        path: dist/exrheader-rs-linux-x86
 
   release:
     needs:
