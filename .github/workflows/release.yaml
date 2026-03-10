@@ -87,6 +87,10 @@ jobs:
           path: dist
           merge-multiple: true
 
+      - name: Rename binaries to lowercase
+        run: |
+          for f in ./dist/*; do mv -v "$f" "$(echo $f | tr '[:upper:]' '[:lower:]')"; done
+
       # Create a new release
       # Docs: https://cli.github.com/manual/gh_release_create
       - name: Create GitHub Release
