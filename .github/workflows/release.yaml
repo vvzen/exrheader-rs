@@ -11,40 +11,57 @@ env:
   BINARY_NAME: exrheader-rs-binary
 
 jobs:
-  # Ensure tests pass, etc
-  run_checks:
+  build_and_upload_linux_x86:
+    env:
+      BINARY_SUFFIX: ${{env.RUNNER_OS}}-${{env.RUNNER_ARCH}}
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v4
     - name: Run tests
       run: cargo test --verbose
     - name: Run clippy
       run: cargo clippy
-
-  upload_binary:
-    needs:
-      - run_checks
-
-    runs-on: ubuntu-latest
-
-    steps:
-    - uses: actions/checkout@v4
-    - name: Build binary for linux x86
+    - name: Build binary for ${{ env.BINARY_SUFFIX }}
       run: cargo build --release --verbose
     - name: Rename Binary
       run: |
         mkdir -p dist
-        cp target/release/exrheader-rs dist/exrheader-rs-linux-x86
-    - name: Upload artifact 
+        cp target/release/exrheader-rs dist/exrheader-rs-${{env.BINARY_SUFFIX}}
+    - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
-        name: ${{ env.BINARY_NAME }}-${{ github.sha }}
-        path: dist/exrheader-rs-linux-x86
+        name: ${{ env.BINARY_NAME }}-${{ github.sha }}-${{ env.BINARY_SUFFIX }}
+        path: dist/exrheader-rs-${{ env.BINARY_SUFFIX }}
+
+  # TODO: Once I have more time, revisit matrix workflows
+  # and remove this duplication.
+  # https://docs.github.com/en/actions/how-tos/write-workflows/choose-what-workflows-do/run-job-variations
+  build_and_upload_macos_arm64:
+    env:
+      BINARY_SUFFIX: ${{env.RUNNER_OS}}-${{env.RUNNER_ARCH}}
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Run tests
+      run: cargo test --verbose
+    - name: Run clippy
+      run: cargo clippy
+    - name: Build binary for ${{ env.BINARY_SUFFIX }}
+      run: cargo build --release --verbose
+    - name: Rename Binary
+      run: |
+        mkdir -p dist
+        cp target/release/exrheader-rs dist/exrheader-rs-${{env.BINARY_SUFFIX}}
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ env.BINARY_NAME }}-${{ github.sha }}-${{ env.BINARY_SUFFIX }}
+        path: dist/exrheader-rs-${{ env.BINARY_SUFFIX }}
 
   release:
     needs:
-      - upload_binary
+      - build_and_upload_linux_x86
+      - build_and_upload_macos_arm64
 
     runs-on: ubuntu-latest
 
@@ -59,10 +76,18 @@ jobs:
         with:
           fetch-depth: 0
           fetch-tags: true
+      # Fetch linux x86 binary
       - name: Fetch binary artifact
         uses: actions/download-artifact@v7
         with:
-          pattern: ${{ env.BINARY_NAME }}-${{ github.sha }}
+          pattern: ${{ env.BINARY_NAME }}-${{ github.sha }}-linux-x86
+          path: dist
+          merge-multiple: true
+      # Fetch macOS arm64 binary
+      - name: Fetch binary artifact
+        uses: actions/download-artifact@v7
+        with:
+          pattern: ${{ env.BINARY_NAME }}-${{ github.sha }}-macos-arm64
           path: dist
           merge-multiple: true
 
