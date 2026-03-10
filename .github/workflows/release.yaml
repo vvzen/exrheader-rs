@@ -45,12 +45,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Pull the binary artifact
-      - name: Fetch local artifacts
+      - uses: actions/checkout@v4
+      - name: Fetch binary artifact
         uses: actions/download-artifact@v7
         with:
           pattern: ${{ env.BINARY_NAME }}
-          path: dist 
+          path: dist
           merge-multiple: true
 
       # Create a new release
