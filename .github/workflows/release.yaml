@@ -72,18 +72,10 @@ jobs:
         with:
           fetch-depth: 0
           fetch-tags: true
-      # Fetch Linux x86 binary
-      - name: Fetch binary artifact
+      - name: Fetch all binary artifacts
         uses: actions/download-artifact@v7
         with:
-          pattern: ${{ env.BINARY_NAME }}-${{ github.sha }}-Linux-X64
-          path: dist
-          merge-multiple: true
-      # Fetch macOS arm64 binary
-      - name: Fetch binary artifact
-        uses: actions/download-artifact@v7
-        with:
-          pattern: ${{ env.BINARY_NAME }}-${{ github.sha }}-macOS-ARM64
+          pattern: ${{ env.BINARY_NAME }}-${{ github.sha }}-*
           path: dist
           merge-multiple: true
 
