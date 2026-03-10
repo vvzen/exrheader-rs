@@ -35,7 +35,7 @@ jobs:
     - name: Upload artifact 
       uses: actions/upload-artifact@v4
       with:
-        name: ${{ env.BINARY_NAME }}
+        name: ${{ env.BINARY_NAME }}-${{ github.sha }}
         path: target/release/exrheader-rs
 
   release:
@@ -49,7 +49,7 @@ jobs:
       - name: Fetch binary artifact
         uses: actions/download-artifact@v7
         with:
-          pattern: ${{ env.BINARY_NAME }}
+          pattern: ${{ env.BINARY_NAME }}-${{ github.sha }}
           path: dist
           merge-multiple: true
 
