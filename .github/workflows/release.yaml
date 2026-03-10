@@ -1,0 +1,59 @@
+name: Create Release
+
+on:
+  pull_request:
+  push:
+    branches: [ "main" ]
+    tags:
+      - '**[0-9]+.[0-9]+.[0-9]+*'
+
+env:
+  CARGO_TERM_COLOR: always
+  BINARY_NAME: exrheader-rs-binary
+
+jobs:
+  # Ensure tests pass, etc
+  run_checks:
+    runs-on: ubuntu-latest
+
+    - uses: actions/checkout@v4
+    - name: Run tests
+      run: cargo test --verbose
+    - name: Run clippy
+      run: cargo clippy
+
+  upload_binary:
+    needs:
+      - run_checks
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: build-linux-x86-binary 
+      uses: actions/checkout@v4
+      run: cargo build --release --verbose
+    - name: Upload artifact 
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ env.BINARY_NAME }}
+        path: target/release/exrheader-rs
+
+  release:
+    needs:
+      - upload_binary
+
+    steps:
+      # Pull the binary artifact
+      - name: Fetch local artifacts
+        uses: actions/download-artifact@v7
+        with:
+          pattern: ${{ env.BINARY_NAME }}
+          path: dist 
+          merge-multiple: true
+
+      # Create a new release
+      # Docs: https://cli.github.com/manual/gh_release_create
+      # FIXME: Figure out $title and $tag
+      - name: Create GitHub Release
+        run: |
+          gh release create $tag --generate-notes --title $title ./dist/* --fail-on-no-commits
