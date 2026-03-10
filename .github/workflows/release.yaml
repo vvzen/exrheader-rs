@@ -11,8 +11,12 @@ env:
   BINARY_NAME: exrheader-rs-binary
 
 jobs:
-  build_and_upload_linux_x86:
-    runs-on: ubuntu-latest
+  build_and_upload:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+
     steps:
     - uses: actions/checkout@v4
     - name: Run tests
@@ -31,33 +35,9 @@ jobs:
         name: ${{ env.BINARY_NAME }}-${{ github.sha }}-${{ env.BINARY_NAME }}-${{ runner.os }}-${{ runner.arch }}
         path: dist/exrheader-rs-${{ runner.os }}-${{ runner.arch }}
 
-  # TODO: Once I have more time, revisit matrix workflows
-  # and remove this duplication.
-  # https://docs.github.com/en/actions/how-tos/write-workflows/choose-what-workflows-do/run-job-variations
-  build_and_upload_macos_arm64:
-    runs-on: macos-latest
-    steps:
-    - uses: actions/checkout@v4
-    - name: Run tests
-      run: cargo test --verbose
-    - name: Run clippy
-      run: cargo clippy
-    - name: Build binary for ${{ runner.os }}-${{ runner.arch }}
-      run: cargo build --release --verbose
-    - name: Rename Binary
-      run: |
-        mkdir -p dist
-        cp target/release/exrheader-rs dist/exrheader-rs-${{ runner.os }}-${{ runner.arch }}
-    - name: Upload artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: ${{ env.BINARY_NAME }}-${{ github.sha }}-${{ runner.os }}-${{ runner.arch }}
-        path: dist/exrheader-rs-${{ runner.os }}-${{ runner.arch }}
-
   release:
     needs:
-      - build_and_upload_linux_x86
-      - build_and_upload_macos_arm64
+      - build_and_upload
 
     runs-on: ubuntu-latest
 
