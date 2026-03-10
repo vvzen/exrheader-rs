@@ -155,5 +155,7 @@ cargo install --git ssh://git@github.com/vvzen/exrheader-rs.git --bin exrheader-
 
 ## From prebuilt binaries
 
-I need to setup CI for this repo, so currently I don't ship any prebuilt binaries.
-Once I figure out to how build binaries here via Github Actions, I suppose I'll make releases for Linux and macOS!
+I'm currently building binaries in CI for both macOS arm64 and Linux x86.
+This means that binaries for those platforms will be available as part of the files uploaded on every Github release, see: <https://github.com/vvzen/exrheader-rs/releases>.
+
+I only support those 2 for now because these are the only ones I can _easily_ test against.
