@@ -65,5 +65,4 @@ jobs:
       - name: Create GitHub Release
         run: |
           tag=$(git describe --tags $(git rev-list --tags --max-count=1))
-          title="Sample Release"
-          gh release create $tag --generate-notes --title $title ./dist/* --fail-on-no-commits
+          gh release create $tag --generate-notes ./dist/* --fail-on-no-commits
