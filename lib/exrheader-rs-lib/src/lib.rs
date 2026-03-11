@@ -95,6 +95,13 @@ pub fn format_metadata(metadata: MetaData) -> Result<Vec<String>, ParsingError> 
                 }
                 AttributeValue::ChannelList(list) => format_channels(list),
                 AttributeValue::Compression(c) => format_compression(c),
+                AttributeValue::EnvironmentMap(em) => {
+                    let s = match em {
+                        EnvironmentMap::Cube => "cube-face",
+                        EnvironmentMap::LatitudeLongitude => "latitude-longitude",
+                    };
+                    format!("{name}: {s} map")
+                }
                 AttributeValue::LineOrder(lo) => {
                     let line_order = match lo {
                         LineOrder::Increasing => "increasing",
