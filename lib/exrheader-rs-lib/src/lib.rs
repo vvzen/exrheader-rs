@@ -62,13 +62,12 @@ pub fn format_metadata(metadata: MetaData) -> Result<Vec<String>, ParsingError> 
 
     // File format and flags
     let file_format_version = metadata.requirements.file_format_version;
+    let is_multilayer = metadata.requirements.has_multiple_layers;
+
     lines.push(format!("File format version: {file_format_version}"));
     lines.push("Flags:".to_string());
     lines.push(format!("\tdeep: {}", metadata.requirements.has_deep_data));
-    lines.push(format!(
-        "\tmultiple layers: {}",
-        metadata.requirements.has_multiple_layers
-    ));
+    lines.push(format!("\tmultiple layers: {}", is_multilayer));
     lines.push(format!(
         "\tlong names: {}",
         metadata.requirements.has_long_names
@@ -78,12 +77,16 @@ pub fn format_metadata(metadata: MetaData) -> Result<Vec<String>, ParsingError> 
         metadata.requirements.is_single_layer_and_tiled
     ));
 
-    // Layers
-    for header in metadata.headers {
+    // Loop through all layers
+    for (li, header) in metadata.headers.iter().enumerate() {
         let attributes = header
             .all_named_attributes()
             .collect::<Vec<_>>()
             .sorted_by(|a, b| a.0.cmp(b.0));
+
+        if is_multilayer {
+            lines.push(format!("\n\n- Part {li} -"));
+        }
 
         for (name, value) in attributes {
             let name =
