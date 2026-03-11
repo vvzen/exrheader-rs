@@ -4,7 +4,8 @@ use std::io::Write;
 use std::path::Path;
 
 use exr::meta::attribute::{
-    AttributeValue, Chromaticities, LevelMode, LineOrder, SampleType, TileDescription,
+    AttributeValue, Chromaticities, EnvironmentMap, LevelMode, LineOrder, SampleType, Text,
+    TileDescription,
 };
 use exr::meta::MetaData;
 use thiserror::Error;
@@ -94,6 +95,7 @@ pub fn format_metadata(metadata: MetaData) -> Result<Vec<String>, ParsingError> 
                     format!(r#"{name}: "{block_type}""#,)
                 }
                 AttributeValue::ChannelList(list) => format_channels(list),
+                AttributeValue::Chromaticities(chroma) => format_chromaticities(chroma),
                 AttributeValue::Compression(c) => format_compression(c),
                 AttributeValue::EnvironmentMap(em) => {
                     let s = match em {
@@ -101,17 +103,6 @@ pub fn format_metadata(metadata: MetaData) -> Result<Vec<String>, ParsingError> 
                         EnvironmentMap::LatitudeLongitude => "latitude-longitude",
                     };
                     format!("{name}: {s} map")
-                }
-                AttributeValue::LineOrder(lo) => {
-                    let line_order = match lo {
-                        LineOrder::Increasing => "increasing",
-                        LineOrder::Decreasing => "decreasing",
-                        LineOrder::Unspecified => "unspecified",
-                    };
-                    format!("lineOrder: {line_order}")
-                }
-                AttributeValue::I32(i) => {
-                    format!("{name}: {i}")
                 }
                 AttributeValue::F32(f) => {
                     format!("{name}: {f}")
@@ -122,12 +113,22 @@ pub fn format_metadata(metadata: MetaData) -> Result<Vec<String>, ParsingError> 
                 AttributeValue::FloatVec2(fv) => {
                     format!("{name}: {}", format_vec2(fv))
                 }
+                AttributeValue::I32(i) => {
+                    format!("{name}: {i}")
+                }
                 AttributeValue::IntegerBounds(b) => {
                     let pos = b.position;
                     let max = b.max();
                     format!("{name}: {} - {}", format_vec2(pos), format_vec2(max))
                 }
-                AttributeValue::Chromaticities(chroma) => format_chromaticities(chroma),
+                AttributeValue::LineOrder(lo) => {
+                    let line_order = match lo {
+                        LineOrder::Increasing => "increasing",
+                        LineOrder::Decreasing => "decreasing",
+                        LineOrder::Unspecified => "unspecified",
+                    };
+                    format!("lineOrder: {line_order}")
+                }
                 AttributeValue::Preview(p) => {
                     let size = format_vec2_as_pixels(p.size);
                     format!("{name}: {size}")
