@@ -135,6 +135,7 @@ pub fn format_metadata(metadata: MetaData) -> Result<Vec<String>, ParsingError> 
                 AttributeValue::Text(t) => {
                     format!(r#"{name}: "{t}""#)
                 }
+                AttributeValue::TextVector(tv) => format_text_vector(&name, tv),
                 AttributeValue::TileDescription(td) => format_tile_description(td),
                 _ => {
                     // FIXME: Keep implementing
@@ -212,4 +213,10 @@ fn format_vec2<T: Display>(v: exr::math::Vec2<T>) -> String {
 
 fn format_vec2_as_pixels<T: Display>(v: exr::math::Vec2<T>) -> String {
     format!("{} by {} pixels", v.0, v.1)
+}
+
+fn format_text_vector(name: &str, text_vector: Vec<Text>) -> String {
+    text_vector.iter().fold(format!("{name}:"), |acc, e| {
+        format!("{acc}\n\t\"{}\"", e.to_string())
+    })
 }
