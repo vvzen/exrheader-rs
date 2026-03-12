@@ -150,7 +150,7 @@ whiteLuminance: 90
 If you have the Rust toolchain setup locally, you can install `exrheader-rs` via `cargo`:
 
 ``` bash
-cargo install --git ssh://git@github.com/vvzen/exrheader-rs.git --bin exrheader-rs
+cargo install --git ssh://git@github.com/vvzen/exrheader-rs.git --locked
 ```
 
 ## From prebuilt binaries
